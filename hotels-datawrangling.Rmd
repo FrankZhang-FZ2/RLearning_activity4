@@ -11,6 +11,7 @@ output:
 ```{r load-pkg, message = FALSE}
 library(tidyverse)
 library(skimr)
+library(gapminder)
 ```
 
 ```{r load-data, message = FALSE}
@@ -46,11 +47,11 @@ from the US (`country` code `"USA"`) and the `lead_time` is less than 1 day.
 **Note:** You will need to set `eval=TRUE` when you have an answer you want to 
 try out.
 
-```{r travel-whim, eval=FALSE}
+```{r travel-whim, eval=TRUE}
 hotels %>%
   filter(
-    country ____ "USA", 
-    lead_time ____ ____
+    country != "USA", 
+    lead_time < 1
     )
 ```
 
@@ -69,7 +70,7 @@ try out.
 ```{r some-children, eval=FALSE}
 hotels %>%
   filter(
-    children [AT LEAST] 1 [OR] babies [AT LEAST] 1
+    children >= 1 | babies >= 1
     )
 ```
 
@@ -82,12 +83,21 @@ in the room? Then, do the same for city hotels, and compare the numbers of
 rows in the resulting filtered data frames.
 
 ```{r resort-children}
-# add code here
+hotels %>%
+  filter(
+    children >= 1 | babies >= 1,
+    hotel == "Resort Hotel"
+    )
+  
 # pay attention to correctness and code style
 ```
 
 ```{r city-children}
-# add code here
+hotels %>%
+  filter(
+    children >= 1 | babies >= 1,
+    hotel == "City Hotel"
+    )
 # pay attention to correctness and code style
 ```
 
@@ -103,8 +113,11 @@ Your label should be short, informative, and shouldn't include spaces. It also
 shouldn't repeat a previous label, otherwise R Markdown will give you an 
 error about repeated R chunk labels.
 
-```{r label-me-1}
-# add code here
+```{r adults}
+hotels %>%
+  count(adults)%>%
+  arrange(desc(n))
+
 # pay attention to correctness and code style
 ```
 
@@ -114,10 +127,20 @@ Repeat Exercise 5, once for canceled bookings (`is_canceled` coded as 1) and
 once for not canceled bookings (`is_canceled` coded as 0). What does this 
 reveal about the surprising results you spotted in the previous exercise?
 
+Order with more than 4 people are all canceled. They are likely created by mistakes.
+
 **Note:** Don't forget to label your R chunk as well (where it says `label-me-2`). 
 
-```{r label-me-2}
-# add code here
+```{r canceled booking}
+hotels %>%
+  filter(is_canceled == 1)%>%
+  count(adults)%>%
+  arrange(desc(n))
+  
+hotels %>%
+  filter(is_canceled == 0)%>%
+  count(adults)%>%
+  arrange(desc(n))
 # pay attention to correctness and code style
 ```
 
@@ -127,8 +150,16 @@ Calculate minimum, mean, median, and maximum average daily rate (`adr`) grouped
 by `hotel` type so that you can get these statistics separately for resort and 
 city hotels. Which type of hotel is higher, on average? 
 
-```{r label-me-3}
-# add code here
+city
+
+```{r calculate}
+hotels%>%
+  group_by(hotel)%>%
+  summarize(minimum = min(adr),
+            mean = mean(adr),
+            median = median(adr),
+            maximum = max(adr)
+              )
 # pay attention to correctness and code style
 ```
 
@@ -144,8 +175,9 @@ preferably you should identify them in a reproducible way with some code.
 **Hint:** For example, you can `filter` for the given `adr` amounts and 
 `select` the relevant columns.
 
-```{r label-me-4}
-# add code here
+```{r investigate}
+hotels %>%
+  filter(adr == -6.38 | adr == 5400)
 # pay attention to correctness and code style
 ```
 
